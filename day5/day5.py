@@ -22,15 +22,16 @@ def part1(pages, greater_than):
 
 def part2(pages, greater_than):
     sorted_pages = []
+
+    def cmp(a,b):
+        if b in greater_than[a]:
+            return -1
+        else:
+            return 1
+
     for p in pages:
         if process_page(p, greater_than) is not None:
             continue
-
-        def cmp(a,b):
-            if b in greater_than[a]:
-                return -1
-            else:
-                return 1
 
         sorted_p = sorted(p, key=cmp_to_key(cmp))
         sorted_pages.append(sorted_p)
@@ -41,19 +42,24 @@ def part2(pages, greater_than):
     return count
 
 
-with open('input') as f:
-    lines = f.readlines()
+def parse(fname):
     greater_than = defaultdict(set)
     pages = []
-    for line in lines:
-        line = line.strip()
-        if '|' in line:
-            a, b = line.split('|')
-            greater_than[int(a)].add(int(b))
-        elif ',' in line:
-            pages.append([int(num) for num in line.split(',')])
+    with open(fname) as f:
+        D = f.read().strip()
+        rules, books = D.split('\n\n')
 
-    print(f'Part 1: {part1(pages, greater_than)}')
-    print(f'Part 2: {part2(pages, greater_than)}')
+    for line in rules.split('\n'):
+        a, b = line.split('|')
+        greater_than[int(a)].add(int(b))
+
+    for book in books.split('\n'):
+        pages.append([int(num) for num in book.split(',')])
+    return greater_than, pages
+
+
+greater_than, pages = parse('input')
+print(f'Part 1: {part1(pages, greater_than)}')
+print(f'Part 2: {part2(pages, greater_than)}')
 
 
