@@ -37,3 +37,4 @@ ops2 = {**ops1, '||': lambda a,b: int(f'{a}{b}')}
 checksums, inputs = parse('input')
 print(f'Part 1: {count_valid_sums(checksums, inputs, ops1)}')
 print(f'Part 2: {count_valid_sums(checksums, inputs, ops2)}')
+# part1(checksums, inputs)
