@@ -1,5 +1,5 @@
 from collections import deque
-from os import get_blocking
+
 def parse(fname):
     grid = {}
     with open(fname, 'r') as f:
@@ -20,15 +20,14 @@ def get_neighbours(node, grid):
                 neighbours.append(node+dir)
     return neighbours
 
-def get_area_perimeter(start, grid):
+def get_area_and_perimeter(start, grid):
     q = deque([start])
     visited = set([start])
     perimeter = 0
     while len(q) > 0:
         node = q.popleft()
         neighbours = get_neighbours(node, grid)
-        if len(neighbours) < 4:
-            perimeter += 4 - len(neighbours)
+        perimeter += 4 - len(neighbours)
         for n in neighbours:
             if n in visited:
                 continue
@@ -38,7 +37,11 @@ def get_area_perimeter(start, grid):
 
 def count_corners(area, R, C):
     count = 0
+    # 1 0 or 1 1 etc are what corners look like
+    # 0 0    1 0
     CORNERS = set([(1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1),(1,1,1,0),(1,1,0,1),(1,0,1,1),(0,1,1,1)])
+    # 1 0 and 0 1 are special edge cases that count as 2
+    # 0 1     1 0
     SPECIAL_CORNERS = set([(1,0,0,1), (0,1,1,0)])
     for i in range(-1, R):
         for j in range(-1, C):
@@ -57,7 +60,7 @@ def solve(grid, R, C):
     for p in grid:
         if p in global_visited:
             continue
-        v, per = get_area_perimeter(p, grid)
+        v, per = get_area_and_perimeter(p, grid)
         global_visited |= v
         sides = count_corners(v, R, C) # corners = sides
         total += len(v)*per
